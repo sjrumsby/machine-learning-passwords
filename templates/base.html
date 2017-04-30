@@ -1,0 +1,55 @@
+<!DOCTYPE xhtml>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Machine Learning Passwords</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/machine.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/static/machine.js"></script>
+</head>
+<body>
+<div class="page-header">
+    <div class="container">
+        <h2>Multifactor Authentication via Machine Learning</h2>
+    </div>
+</div>
+<header class="navbar navbar-static-top bs-docs-nav">
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/view">View Users</a>
+                    </li>
+                    <li>
+                        <a href="/create">Create User</a>
+                    </li>
+                    <li>
+                        <a href="/login">Login</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Machine Learning Passwords</a>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="page">
+        <div class="container">
+                {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
