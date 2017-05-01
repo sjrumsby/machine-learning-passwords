@@ -1,5 +1,12 @@
 div.page-header {
-    margin-bottom: 0px;
+    margin: 0px;;
     padding-bottom: 0px;
     border-bottom: 0px;
+    background-color: #0269c2;
 }
+
+div.page-header h1, div.page-header h2 {
+    color: white;
+}
+
+
