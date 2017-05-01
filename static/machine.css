@@ -1,3 +1,7 @@
+#message {
+    display: none;
+}
+
 div.page-header {
     margin: 0px;;
     padding-bottom: 0px;
@@ -9,4 +13,11 @@ div.page-header h1, div.page-header h2 {
     color: white;
 }
 
-
+.form-align p > label:first-child {
+    display: inline-block;
+    font-weight: 700;
+    margin-bottom: 5px;
+    padding-right: 15px;
+    text-align: right;
+    width:150px;
+}

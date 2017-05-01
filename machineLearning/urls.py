@@ -20,6 +20,7 @@ from main import views as mv
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/users', mv.get_users),
     url(r'view', mv.view),
     url(r'create', mv.create),
     url(r'login', mv.login),
