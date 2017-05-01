@@ -36,3 +36,20 @@ def get_users(request):
     }
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+def create_user(request):
+    if request.method != "POST":
+        resp = {"result": 0}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+    except KeyError:
+        resp = {"result": 0, "error_msg": "Both username and password are required fields"}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    resp = {"result": 1}
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
