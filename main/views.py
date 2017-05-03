@@ -1,6 +1,6 @@
 import json
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
@@ -18,11 +18,24 @@ def create(request):
     context = {}
     return render(request, 'main/create.html', context)
 
-def train(request):
+def redirect(request):
+    return HttpResponseRedirect('/search')
+
+def train_select(request):
+    users = Machine_User.objects.filter(status__description='Untrained')
+    context = {"users": users}
+    return render(request, 'main/train_select.html', context)
+
+def train(request, user_id):
     context = {}
     return render(request, 'main/train.html', context)
 
-def test(request):
+def test_select(request):
+    users = Machine_User.objects.filter(status__description='Trained')
+    context = {"users": users}
+    return render(request, 'main/test_select.html', context)
+
+def test(request, user_id):
     context = {}
     return render(request, 'main/test.html', context)
 
@@ -65,7 +78,13 @@ def get_users(request):
     response_data['order_col'] = order_col
 
     for u in filteredUsers:
-        response_data['data'].append([u.username, u.password, u.status.description])
+        links = ''
+
+        if u.status.description == "Untrained":
+            links += '<a href="/train/%s">Train User</a>' % u.id
+        else:
+            links += '<a href="/test/%s">Test User</a>' % u.id
+        response_data['data'].append([u.username, u.password, u.status.description, links])
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
 

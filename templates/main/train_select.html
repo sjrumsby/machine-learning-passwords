@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}
+<h2>Train User Select</h2>
+{% endblock %}
+{% block content %}
+<div class="form-align">
+{% if users|length > 0 %}
+    <p>Select a user to train:</p>
+    <p>
+        <label for="trainSelect">Username</label>
+        <select id="trainSelect" name="trainSelect">
+        {% for u in users %}
+            <option value="{{u.id}}">{{u.username}}</option>
+        {% endfor %}
+        </select>
+    </p>
+    <a href="#" type="button" class="btn btn-primary" id="train_user_button">Train</a>
+{% else %}
+    <p>There are no users available to train. Try <a href="/create">creating</a> one first.</p>
+{% endif %}
+</div>
+{% endblock %}

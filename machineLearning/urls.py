@@ -24,8 +24,9 @@ urlpatterns = [
     url(r'^api/users', mv.get_users),
     url(r'^search', mv.search),
     url(r'^create', mv.create),
-    url(r'^train/(?P<user_id>\d+)/$', mv.train),
-    url(r'^train', mv.search),  #No user_id, send them to the search!
-    url(r'^test', mv.test),
+    url(r'^train/(?P<user_id>\d+)', mv.train),
+    url(r'^train', mv.train_select),  #No user_id, send them to the search!
+    url(r'^test/(?P<user_id>\d+)', mv.test),
+    url(r'^test', mv.test_select),
     url(r'', mv.index),
 ]

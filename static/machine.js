@@ -31,8 +31,8 @@ $.ajaxSetup({
 
 function message(msg) {
     $("#message").html("<p>" + msg + "</p>");
-    $("#message").show("fast")
-    setTimeout(function() { $("#message").slideUp("fast"); }, 5000)
+    $("#message").show("fast");
+    setTimeout(function() { $("#message").slideUp("fast"); }, 5000);
 }
 
 
@@ -52,15 +52,40 @@ function create_user() {
         dataType: "json"
     }).done(function(data) {
         if (data.result === 1) {
-            message("Succesfully created a new user. Now train the algorithm!")
+            message("Succesfully created a new user. Now train the algorithm!");
         } else {
             if (data.error_msg) {
-                message(data.error_msg)
+                message(data.error_msg);
             } else {
-                message("An unknown error occurred. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords")
+                message("An unknown error occurred. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
             }
         }
     });
+}
+
+function trainUserButton() {
+    var user_id = $('#trainSelect').val();
+
+    if (user_id) {
+        var current_url = window.location.href;
+        new_url = current_url + "/" + user_id
+        window.location = new_url
+    } else {
+        message("Invalid user_id. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
+    }
+}
+
+function testUserButton() {
+    var user_id = $('#testSelect').val();
+
+    if (user_id) {
+        var current_url = window.location.href;
+        new_url = current_url + "/" + user_id
+        window.location = new_url
+    } else {
+        message("Invalid user_id. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
+    }
+
 }
 
 $(document).ready(function() {
@@ -68,5 +93,8 @@ $(document).ready(function() {
         "ajax": "/api/users/",
         "processing": true,
         "serverSide": true,
-    } );
+    });
+
+    $('#train_user_button').on('click', function() { trainUserButton(); });
+    $('#test_user_button').on('click', function() { testUserButton(); });
 } );
