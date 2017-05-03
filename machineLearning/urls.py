@@ -22,8 +22,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/users/create', mv.create_user),
     url(r'^api/users', mv.get_users),
-    url(r'view', mv.view),
-    url(r'create', mv.create),
-    url(r'login', mv.login),
+    url(r'^search', mv.search),
+    url(r'^create', mv.create),
+    url(r'^train/(?P<user_id>\d+)/$', mv.train),
+    url(r'^train', mv.search),  #No user_id, send them to the search!
+    url(r'^test', mv.test),
     url(r'', mv.index),
 ]
