@@ -30,16 +30,30 @@ def train(request, user_id):
     context = {}
     return render(request, 'main/train.html', context)
 
-def test_select(request):
-    users = Machine_User.objects.filter(status__description='Trained')
-    context = {"users": users}
-    return render(request, 'main/test_select.html', context)
-
-def test(request, user_id):
+def test(request):
     context = {}
     return render(request, 'main/test.html', context)
 
 #Begin API Ajax Things
+@csrf_exempt
+def login(request):
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+
+    if username == None or password == None:
+        resp = {"result": 0}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    u = Machine_User.objects.filter(username=username, password=password)
+
+    if u.count() == 1:
+        resp = {"result": 1}
+    else:
+        resp = {"result": 0}
+
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+        
+
 def get_users(request):
     try:
         draw = request.GET['draw']

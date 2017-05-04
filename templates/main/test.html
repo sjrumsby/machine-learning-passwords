@@ -1,6 +1,20 @@
 {% extends "base.html" %}
 {% block title %}
-<h2>Login</h2>
+<h2>Test</h2>
 {% endblock %}
 {% block content %}
+<p>Use the below form to login as a user and perform the keystroke dynamics:</p>
+<div id="test_user" class="form-align col-lg-6">
+    <form action="javascript:testLogin();">
+        <p>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" />
+        </p>
+        <p>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" />
+        </p>
+        <input type="submit" class="btn btn-primary" id="test_user_button" value="Login" />
+    </form>
+</div>
 {% endblock %}

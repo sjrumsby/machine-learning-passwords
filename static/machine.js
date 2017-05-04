@@ -35,6 +35,32 @@ function message(msg) {
     setTimeout(function() { $("#message").slideUp("fast"); }, 5000);
 }
 
+function performAnalysis() {
+    console.log('hi');
+}
+
+function testLogin() {
+    username = $("#username").val();
+    password = $("#password").val();
+
+    if (!username || !password) {
+        console.log("Username or password were submitted null");
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/api/login",
+        data: {"username": username, "password": password},
+        dataType: "json"
+    }).done(function(data) {
+        if (data.result === 1) {
+            performAnalysis();
+        } else {
+            message("Login failed. Not performing machine learning analysis");
+        }
+    });
+}
 
 function create_user() {
     username = $("#username").val();
@@ -94,7 +120,4 @@ $(document).ready(function() {
         "processing": true,
         "serverSide": true,
     });
-
-    $('#train_user_button').on('click', function() { trainUserButton(); });
-    $('#test_user_button').on('click', function() { testUserButton(); });
-} );
+});
