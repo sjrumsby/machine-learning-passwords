@@ -27,7 +27,12 @@ def train_select(request):
     return render(request, 'main/train_select.html', context)
 
 def train(request, user_id):
-    context = {}
+    try:
+        user = Machine_User.objects.get(id=user_id)
+    except Machine_User.DoesNotExist:
+        return HttpResponseRedirect("/train")
+    context = {"user": user}
+
     return render(request, 'main/train.html', context)
 
 def test(request):

@@ -3,4 +3,20 @@
 <h2>Train</h2>
 {% endblock %}
 {% block content %}
+<p>In order to train the algorithm, you must enter your password into the form below several times (at least 10 times). Once the algorithm has enough of a baseline, you will not be able to enter your password again and then you will be able to test the algorithm <a href="/test/{{user.id}}/">here</a>.</p>
+<div class="form-align">
+    <form action="javascript:testLogin()" class="machineLearn">
+        <p>
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" />
+        </p>
+        <p>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" />
+        </p>
+        <p>
+            <input type="submit" value="Login" class="button btn btn-primary" />
+        </p>
+    </form>
+</div>
 {% endblock %}

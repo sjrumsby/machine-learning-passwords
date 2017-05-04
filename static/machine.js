@@ -35,9 +35,55 @@ function message(msg) {
     setTimeout(function() { $("#message").slideUp("fast"); }, 5000);
 }
 
-function performAnalysis() {
-    console.log('hi');
+function sortPress(a,b) {
+    if (a.time < b.time) {
+        return -1;
+    } else if (b.time > a.time) {
+        return 1;
+    }
+    return 0;
 }
+
+function performAnalysis() {
+    sortedPresses = keyPresses.sort(sortPress);
+    console.log(sortedPresses);
+}
+
+function logKeyPress(e) {
+    if (e.type == "keyup") {
+        if (e.which == 8 || e.which == 46) {
+            alert("Woah now - we can't handle making mistakes. Try again");
+            clearLogin();
+            return 0;
+        }
+
+        if ($.inArray(e.which, [35,36,37,38,39,40]) != -1) {
+            alert(e.which);
+            alert("Stop trying to confuse me with your fancy navigation! Again!");
+            clearLogin();
+            return 0;
+        }
+    }
+
+    var pressTime = window.performance.now();
+    var element = document.activeElement.id;
+
+    var press = {
+        "action": e.type,
+        "time": pressTime,
+        "key": e.which,
+        "element": element
+    };
+
+    keyPresses.push(press)
+}
+
+function clearLogin() {
+    $("#username").val("");
+    $("#password").val("");
+    keyPresses = []
+}
+
 
 function testLogin() {
     username = $("#username").val();
@@ -59,6 +105,8 @@ function testLogin() {
         } else {
             message("Login failed. Not performing machine learning analysis");
         }
+
+        clearLogin();
     });
 }
 
@@ -101,23 +149,18 @@ function trainUserButton() {
     }
 }
 
-function testUserButton() {
-    var user_id = $('#testSelect').val();
-
-    if (user_id) {
-        var current_url = window.location.href;
-        new_url = current_url + "/" + user_id
-        window.location = new_url
-    } else {
-        message("Invalid user_id. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
-    }
-
-}
-
 $(document).ready(function() {
+    keyPresses = [];
+    $("#username").val("")
+    $("#password").val("")
     $('#users').DataTable( {
         "ajax": "/api/users/",
         "processing": true,
         "serverSide": true,
     });
+    $("#train_user_button").on("click", function() { trainUserButton(); });
+
+    $(".machineLearn").on("keydown", function(e) { logKeyPress(e); });
+    $(".machineLearn").on("keyup", function(e) { logKeyPress(e); });
 });
+
