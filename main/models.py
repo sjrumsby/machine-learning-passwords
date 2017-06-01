@@ -13,6 +13,14 @@ class Machine_User(models.Model):
 
 class User_Signature(models.Model):
     machine_user    = models.ForeignKey(Machine_User)
-    attempt         = models.IntegerField()
+    tab_pressed     = models.BooleanField()
+    enter_pressed   = models.BooleanField()
+    total_time      = models.IntegerField()
 
+class Key_Stroke(models.Model):
+    user_signature  = models.ForeignKey(User_Signature)
+    letter          = models.IntegerField()
+    hold_time       = models.IntegerField()
+    next_up_time    = models.IntegerField(null=True)
+    next_down_time  = models.IntegerField(null=True)
 

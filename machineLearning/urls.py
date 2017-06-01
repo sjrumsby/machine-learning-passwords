@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^api/users/create', mv.create_user),
     url(r'^api/users', mv.get_users),
     url(r'^api/login', mv.login),
+    url(r'^api/saveAnalysis', mv.save_analysis),
     url(r'^search', mv.search),
     url(r'^create', mv.create),
     url(r'^train/(?P<user_id>\d+)', mv.train),

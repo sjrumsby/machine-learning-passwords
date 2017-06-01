@@ -29,9 +29,13 @@ $.ajaxSetup({
     }
 });
 
-function message(msg) {
-    $("#message").html("<p>" + msg + "</p>");
-    $("#message").show("fast");
+function message(msg, colour) {
+    if (!colour) {
+        colour = "red";
+    }
+
+    $("#message").html("<p style='color:" + colour + "'>" + msg + "</p>");
+    $("#message").slideDown("fast");
     setTimeout(function() { $("#message").slideUp("fast"); }, 5000);
 }
 
@@ -45,21 +49,43 @@ function sortPress(a,b) {
 }
 
 function performAnalysis() {
-    sortedPresses = keyPresses.sort(sortPress);
-    console.log(sortedPresses);
+    var sortedPresses = keyPresses.sort(sortPress);
+    var keyStrokes = JSON.stringify(sortedPresses)
+    var username = $("#username").val();
+    var password = $("#password").val();
+
+    $.ajax({
+        type: "POST",
+        url: "/api/saveAnalysis",
+        data: {"username": username, "password": password, "keyStrokes": keyStrokes},
+        dataType: "json"
+    }).done(function(data) {
+        if (data.result === 1) {
+            message("Successfully saved login attempt", "black");
+        } else {
+            message("An unknown error occurred. If this continues, please submit a bug ticket to: github.com/sjrumsby/machine-learning-passwords");
+        }
+
+        clearLogin();
+    }).fail(function() {
+        message("An unknown error occurred. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
+    });
 }
 
 function logKeyPress(e) {
+    if (e.type == "keypress") {
+        console.log(e);
+    }
+
     if (e.type == "keyup") {
         if (e.which == 8 || e.which == 46) {
-            alert("Woah now - we can't handle making mistakes. Try again");
+            message("Woah now - we can't handle making mistakes. Try again");
             clearLogin();
             return 0;
         }
 
         if ($.inArray(e.which, [35,36,37,38,39,40]) != -1) {
-            alert(e.which);
-            alert("Stop trying to confuse me with your fancy navigation! Again!");
+            message("Stop trying to confuse me with your fancy navigation! Again!");
             clearLogin();
             return 0;
         }
@@ -68,11 +94,20 @@ function logKeyPress(e) {
     var pressTime = window.performance.now();
     var element = document.activeElement.id;
 
+    var keyCode = e.keyCode;
+
+    if (keyCode === 0) {
+        keyCode = e.charCode;
+    }
+
+    console.log(keyCode)
+
     var press = {
         "action": e.type,
         "time": pressTime,
-        "key": e.which,
-        "element": element
+        "key": e.key,
+        "element": element,
+        "keyCode": keyCode,
     };
 
     keyPresses.push(press)
@@ -86,8 +121,8 @@ function clearLogin() {
 
 
 function testLogin() {
-    username = $("#username").val();
-    password = $("#password").val();
+    var username = $("#username").val();
+    var password = $("#password").val();
 
     if (!username || !password) {
         console.log("Username or password were submitted null");
@@ -107,12 +142,14 @@ function testLogin() {
         }
 
         clearLogin();
+    }).fail(function() {
+        message("An unknown error occurred. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
     });
 }
 
 function create_user() {
-    username = $("#username").val();
-    password = $("#password").val();
+    var sername = $("#username").val();
+    var password = $("#password").val();
 
     if (password.length < 8) {
         message("Password length must be at least 8 characters for training purposes");
@@ -126,7 +163,7 @@ function create_user() {
         dataType: "json"
     }).done(function(data) {
         if (data.result === 1) {
-            message("Succesfully created a new user. Now train the algorithm!");
+            message("Succesfully created a new user. Now train the algorithm!", "black");
         } else {
             if (data.error_msg) {
                 message(data.error_msg);
@@ -134,6 +171,8 @@ function create_user() {
                 message("An unknown error occurred. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
             }
         }
+    }).fail(function() {
+        message("An unknown error occurred. If this continues, please submit a bug ticket to github.com/sjrumsby/machine-learning-passwords");
     });
 }
 
@@ -162,5 +201,6 @@ $(document).ready(function() {
 
     $(".machineLearn").on("keydown", function(e) { logKeyPress(e); });
     $(".machineLearn").on("keyup", function(e) { logKeyPress(e); });
+    $(".machineLearn").on("keypress", function(e) { logKeyPress(e); });
 });
 

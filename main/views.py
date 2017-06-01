@@ -6,6 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 from main.models import *
 
+import logging
+logger = logging.getLogger(__name__)
+
 def index(request):
     context = {}
     return render(request, 'main/index.html', context)
@@ -126,5 +129,103 @@ def create_user(request):
 
     resp = {"result": 1}
     return HttpResponse(json.dumps(resp), content_type="application/json")
+
+@csrf_exempt
+def save_analysis(request):
+    if request.method != "POST":
+        resp = {"result": 0}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+        keyStrokes = json.loads(request.POST['keyStrokes'])
+    except KeyError:
+        resp = {"result": 0, "error_msg": "All 3 of username, password, and keyStrokes are required fields"}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    try:
+        u = Machine_User.objects.get(username=username)
+    except Machine_User.DoesNotExist:
+        resp = {"result": 0, "error_msg": "That username does not exist"}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    if u.password != password:
+        resp = {"result": 0, "error_msg": "Password does not match"}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    keyStrokeUsername = ""
+    keyStrokePassword = ""
+
+    for k in keyStrokes:
+        if k['action'] == "keypress":
+            if k['keyCode'] not in [9,13]:
+                c = k['key']
+
+                if k['element'] == "username":
+                    keyStrokeUsername += c
+                else:
+                    keyStrokePassword += c
+
+    if keyStrokeUsername != username or keyStrokePassword != password:
+        logger.info(keyStrokeUsername)
+        logger.info(keyStrokePassword)
+        resp = {"result": 0, "error_msg": "key stroke analysis failed to validate the username and password"}
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    totalTime = keyStrokes[-1]['time'] - keyStrokes[0]['time']
+    tabPressed = False
+    enterPressed = False
+
+    for k in keyStrokes:
+        if k['keyCode'] == 9:
+            tabPressed = True
+        if k['keyCode'] == 13:
+            enterPressed = True
+
+    userSig = User_Signature.objects.create(machine_user=u, tab_pressed=tabPressed, enter_pressed=enterPressed, total_time=totalTime)
+
+    for i in range(len(keyStrokes)):
+        if keyStrokes[i]['action'] == 'keypress':
+            currentKeyCode = keyStrokes[i]['keyCode']
+        else:
+            continue
+
+        #Get the start press time
+        for j in range(i, -1, -1):
+            logger.info(j)
+            if keyStrokes[j]['action'] == 'keydown':
+                startTime = keyStrokes[j]['time']
+                break
+
+        #Get the end lift time
+        for j in range(i, len(keyStrokes)):
+            if keyStrokes[j]['action'] == 'keyup':
+                endTime = keyStrokes[j]['time']
+                break
+
+        holdTime = endTime - startTime
+
+        Key_Stroke.objects.create(user_signature=userSig, letter=currentKeyCode, hold_time=holdTime)
+
+        
+
+        
+
+    resp = {"result": 1}
+    return HttpResponse(json.dumps(resp), content_type="application/json")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
